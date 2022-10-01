@@ -3,8 +3,6 @@ mod colors;
 mod glyphs;
 mod util;
 
-use std::time::Duration;
-
 use chrono::{DateTime, DurationRound, Local, Timelike};
 use minifb::{Window, WindowOptions};
 
@@ -19,8 +17,7 @@ const LINE_HEIGHT: usize = WINDOW_HEIGHT - MARGIN - MARGIN;
 fn main() {
     std::env::set_var("RUST_BACKTRACE", "1");
 
-    let mut glyphs = Glyphs::new();
-    glyphs.rescale(LINE_HEIGHT as f32);
+    let mut glyphs = Glyphs::with_starting_scale(LINE_HEIGHT as f32);
 
     let mut buffer = TextBuffer::new();
 
@@ -41,15 +38,12 @@ fn main() {
 }
 
 fn open_window() -> Window {
-    let mut window = Window::new(
+    Window::new(
         "D'ni Clock",
         WINDOW_WIDTH,
         WINDOW_HEIGHT,
         WindowOptions::default(),
-    ).unwrap();
-    // Only need to update at least once for the smallest unit of time we show
-    window.limit_update_rate(Some(Duration::from_millis(5)));
-    window
+    ).unwrap()
 }
 
 fn update_time(time: DateTime<Local>, glyphs: &mut Glyphs) -> TextBuffer {
@@ -60,16 +54,16 @@ fn update_time(time: DateTime<Local>, glyphs: &mut Glyphs) -> TextBuffer {
         height: LINE_HEIGHT,
     };
 
-    buffer.write_glyph(glyphs.get_dni_numeral_one_digit(time.hour().try_into().unwrap()));
+    buffer.write_glyph(glyphs.get_dni_number_one_digit(time.hour().try_into().unwrap()));
 
     buffer.write_glyph(glyphs.get_colon());
 
-    buffer.write_glyph(glyphs.get_dni_numeral_two_digits(time.minute().try_into().unwrap()));
+    buffer.write_glyph(glyphs.get_dni_number_two_digits(time.minute().try_into().unwrap()));
 
     if SHOW_SECONDS {
         buffer.write_glyph(glyphs.get_colon());
 
-        buffer.write_glyph(glyphs.get_dni_numeral_two_digits(time.second().try_into().unwrap()));
+        buffer.write_glyph(glyphs.get_dni_number_two_digits(time.second().try_into().unwrap()));
     }
 
     buffer
