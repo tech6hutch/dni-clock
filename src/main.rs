@@ -6,7 +6,7 @@ mod util;
 use chrono::{DateTime, DurationRound, Local, Timelike};
 use minifb::{Window, WindowOptions};
 
-use crate::{buf2d::Vec2d, colors::BG, glyphs::{Glyphs, TextBuffer}};
+use crate::{buf2d::Vec2d, glyphs::{Glyphs, TextBuffer}};
 
 const SHOW_SECONDS: bool = true;
 const WINDOW_WIDTH: usize = if SHOW_SECONDS { 300 } else { 200 };
@@ -48,7 +48,7 @@ fn open_window() -> Window {
 
 fn update_time(time: DateTime<Local>, glyphs: &mut Glyphs) -> TextBuffer {
     let mut buffer = TextBuffer {
-        buf: Vec2d::new(BG, WINDOW_WIDTH, WINDOW_HEIGHT),
+        buf: Vec2d::new(colors::BG, WINDOW_WIDTH, WINDOW_HEIGHT),
         x: MARGIN,
         y: MARGIN,
         height: LINE_HEIGHT,

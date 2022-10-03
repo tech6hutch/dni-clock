@@ -6,7 +6,7 @@ use std::array;
 
 use ab_glyph::{Font, FontRef};
 
-use crate::{buf2d::Vec2d, colors::{BG, FG, self, Color}};
+use crate::{buf2d::Vec2d, colors::{self, Color}};
 
 /// A glyph rendered to pixels.
 pub type GlyphBuffer = Vec2d<Color>;
@@ -69,7 +69,7 @@ impl TextBuffer {
     /// `colors::BG` (i.e., should be overwritten, when composing glyphs).
     fn pixel_is_somewhat_transparent(px: Color) -> bool {
         #[allow(clippy::assertions_on_constants)] // no duh it's optimized out, clippy
-        const _: () = assert!(BG == 0, "this algorithm relies on BG being black");
+        const _: () = assert!(colors::BG == 0, "this algorithm relies on BG being black");
 
         /// Adds the red, green, and blue components
         const fn sum_rgb(color: Color) -> u16 {
@@ -77,7 +77,7 @@ impl TextBuffer {
             r as u16 + g as u16 + b as u16
         }
 
-        const FG_RGB_SUM: u16 = sum_rgb(FG);
+        const FG_RGB_SUM: u16 = sum_rgb(colors::FG);
 
         const THRESHOLD: u16 = 100; // out of u8::MAX
 
@@ -198,9 +198,9 @@ fn render_scaled_glyph(font: &impl Font, c: char, scale: f32) -> GlyphBuffer {
     let glyph = font.outline_glyph(glyph).unwrap();
     let width = glyph.px_bounds().width() as usize;
     let height = glyph.px_bounds().height() as usize;
-    let mut buf = Vec2d::new(BG, width, height);
+    let mut buf = Vec2d::new(colors::BG, width, height);
     glyph.draw(|x, y, c| {
-        buf[(x, y)] = colors::darken(FG, c);
+        buf[(x, y)] = colors::darken(colors::FG, c);
     });
     buf
 }
